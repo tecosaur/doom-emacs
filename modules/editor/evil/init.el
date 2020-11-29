@@ -37,13 +37,12 @@
       elisp-mode
       ert
       free-keys
-      help
       helm
+      indent
       image
       kotlin-mode
       occur
       package-menu
-      ruby-mode
       simple
       slime
       lispy)
@@ -148,6 +147,7 @@ variable for an explanation of the defaults (in comments). See
       image+
       imenu
       imenu-list
+      (indent "indent")
       indium
       info
       ivy
@@ -194,6 +194,7 @@ variable for an explanation of the defaults (in comments). See
       robe
       rtags
       ruby-mode
+      sh-script
       simple
       slime
       sly
@@ -223,6 +224,7 @@ variable for an explanation of the defaults (in comments). See
       xref
       xwidget
       youtube-dl
+      zmusic
       (ztree ztree-diff)))
 
   (defun +evil-collection-init (module &optional disabled-list)
@@ -260,10 +262,15 @@ and complains if a module is loaded too early (during startup)."
       "q" #'kill-current-buffer
       "d" #'process-menu-delete-process)
 
-    (mapc #'+evil-collection-init '(comint custom help)))
+    (mapc #'+evil-collection-init '(comint custom)))
 
   ;; ...or on first invokation of their associated major/minor modes.
   (after! evil
+    ;; Emacs loads these two packages immediately, at startup, which needlessly
+    ;; convolutes load order for evil-collection-help.
+    (defer-feature! help help-mode)
+    (defer-feature! help-mode help-mode)
+
     (add-transient-hook! 'Buffer-menu-mode
       (+evil-collection-init '(buff-menu "buff-menu")))
     (add-transient-hook! 'image-mode
@@ -272,6 +279,8 @@ and complains if a module is loaded too early (during startup)."
       (+evil-collection-init 'elisp-mode))
     (add-transient-hook! 'occur-mode
       (+evil-collection-init '(occur replace)))
+    (add-transient-hook! 'indent-rigidly
+      (+evil-collection-init '(indent "indent")))
     (add-transient-hook! 'minibuffer-setup-hook
       (when evil-collection-setup-minibuffer
         (+evil-collection-init 'minibuffer)
