@@ -231,7 +231,6 @@ Ignores all arguments and returns nil."
         org-msg-startup "hidestars indent inlineimages"
         org-msg-greeting-name-limit 3
         org-msg-default-alternatives '(html text))
-        org-msg-text-plain-alternative t)
 
   (defvar +org-msg-currently-exporting nil
     "Helper variable to indicate whether org-msg is currently exporting the org buffer to HTML.
