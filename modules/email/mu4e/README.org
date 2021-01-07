@@ -173,10 +173,14 @@ Then configure Emacs to use your email address:
 With the =+gmail= flag, integrations are applied which account for the different
 behaviour of Gmail.
 
-The integrations are applied when using addresses which contain =@gmail.com= or
-have =gmail= in the maildir name. You can use ~+mu4e-gmail-addresses~ when you want
-an address to be treated as such but it meets neither conditions (e.g. with
-Gsuite).
+The integrations are applied to addresses listed in ~+mu4e-gmail-addresses~. The
+relative location of the maildir should also be listed:
+#+begin_src emacs-lisp
+(setq +mu4e-gmail-addresses '(("example@gmail.com" . "/gmail")
+                              ("example@example.com" . "/example")))
+#+end_src
+
+Any domain can be specified, so G Suite accounts can benefit from the integrations.
 
 ** OrgMsg
 With the =+org= flag, =org-msg= is installed, and ~org-msg-mode~ is enabled before

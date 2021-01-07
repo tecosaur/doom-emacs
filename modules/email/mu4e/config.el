@@ -387,17 +387,15 @@ Must be set before org-msg is loaded to take effect.")
 (when (featurep! +gmail)
   (after! mu4e
     (defvar +mu4e-gmail-addresses nil
-      "A list of email addresses which, despite not:
-- having '@gmail.com' in them, or
-- being in a maildir where the name includes 'gmail'
-
-Should be treated as a gmail address.")
+      "An alist of gmail addresses of the format
+\((\"address@domain.com\" . \"/maildir\"))")
 
     ;; don't save message to Sent Messages, Gmail/IMAP takes care of this
     (setq mu4e-sent-messages-behavior
           (lambda () ;; TODO make use +mu4e-msg-gmail-p
             (if (or (string-match-p "@gmail.com\\'" (message-sendmail-envelope-from))
-                    (member (message-sendmail-envelope-from) +mu4e-gmail-addresses))
+                    (member (message-sendmail-envelope-from)
+                            (mapcar #'car +mu4e-gmail-addresses)))
                 'delete 'sent))
 
           ;; don't need to run cleanup after indexing for gmail
@@ -408,19 +406,10 @@ Should be treated as a gmail address.")
           mu4e-index-lazy-check t)
 
     (defun +mu4e-msg-gmail-p (msg)
-      (or
-       (string-match-p "@gmail.com"
-                       (cond
-                        ((member (mu4e-message-field msg :to)
-                                 (append (mu4e-personal-addresses)
-                                         +mu4e-gmail-addresses))
-                         (mu4e-message-field msg :to))
-                        ((member (mu4e-message-field msg :from)
-                                 (append (mu4e-personal-addresses)
-                                         +mu4e-gmail-addresses))
-                         (mu4e-message-field msg :from))
-                        (t "")))
-       (string-match-p "gmail" (mu4e-message-field msg :maildir))))
+      (or (string-match-p "gmail" (mu4e-message-field msg :maildir))
+          (cl-some
+           (doom-rpartial #'string-prefix-p (mu4e-message-field msg :maildir))
+           (mapcar #'cdr +mu4e-gmail-addresses))))
 
     ;; In my workflow, emails won't be moved at all. Only their flags/labels are
     ;; changed. Se we redefine the trash and refile marks not to do any moving.
