@@ -173,14 +173,26 @@ Then configure Emacs to use your email address:
 With the =+gmail= flag, integrations are applied which account for the different
 behaviour of Gmail.
 
-The integrations are applied to addresses listed in ~+mu4e-gmail-addresses~. The
-relative location of the maildir should also be listed:
+The integrations are applied to addresses listed in ~+mu4e-gmail-addresses~. Any
+domain can be specified, so G Suite accounts can benefit from the integrations.
+The relative location of the maildir should also be listed:
 #+begin_src emacs-lisp
 (setq +mu4e-gmail-addresses '(("example@gmail.com" . "/gmail")
                               ("example@example.com" . "/example")))
 #+end_src
 
-Any domain can be specified, so G Suite accounts can benefit from the integrations.
+
+
+If you only use Gmail, you can improve performance due to the way Gmail
+presents messages over IMAP:
+#+begin_src emacs-lisp
+;; don't need to run cleanup after indexing for gmail
+(setq mu4e-index-cleanup nil
+
+      ;; because gmail uses labels as folders we can use lazy check since
+      ;; messages don't really "move"
+      mu4e-index-lazy-check t)
+#+end_src
 
 ** OrgMsg
 With the =+org= flag, =org-msg= is installed, and ~org-msg-mode~ is enabled before

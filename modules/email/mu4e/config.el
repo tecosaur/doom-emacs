@@ -396,14 +396,7 @@ Must be set before org-msg is loaded to take effect.")
             (if (or (string-match-p "@gmail.com\\'" (message-sendmail-envelope-from))
                     (member (message-sendmail-envelope-from)
                             (mapcar #'car +mu4e-gmail-addresses)))
-                'delete 'sent))
-
-          ;; don't need to run cleanup after indexing for gmail
-          mu4e-index-cleanup nil
-
-          ;; because gmail uses labels as folders we can use lazy check since
-          ;; messages don't really "move"
-          mu4e-index-lazy-check t)
+                'delete 'sent)))
 
     (defun +mu4e-msg-gmail-p (msg)
       (or (string-match-p "gmail" (mu4e-message-field msg :maildir))
