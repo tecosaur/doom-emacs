@@ -178,7 +178,7 @@ account address and "gmail" in the account maildir, as well as accounts listed
 in ~+mu4e-gmail-accounts~. Any domain can be specified, so G Suite accounts can
 benefit from the integrations:
 #+begin_src emacs-lisp
-;; if "gmail" is missing from the maildir, the account must be listed here
+;; if "gmail" is missing from the address or maildir, the account must be listed here
 (setq +mu4e-gmail-accounts '(("hlissner@gmail.com" . "/hlissner")
                              ("example@example.com" . "/example")))
 #+end_src
@@ -188,7 +188,6 @@ presents messages over IMAP:
 #+begin_src emacs-lisp
 ;; don't need to run cleanup after indexing for gmail
 (setq mu4e-index-cleanup nil
-
       ;; because gmail uses labels as folders we can use lazy check since
       ;; messages don't really "move"
       mu4e-index-lazy-check t)

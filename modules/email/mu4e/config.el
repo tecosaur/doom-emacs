@@ -387,8 +387,12 @@ Must be set before org-msg is loaded to take effect.")
 (when (featurep! +gmail)
   (after! mu4e
     (defvar +mu4e-gmail-accounts nil
-      "An alist of gmail addresses of the format
-\((\"address@domain.com\" . \"account-maildir\"))")
+      "Gmail accounts that do not contain \"gmail\" in address and maildir.
+
+An alist of Gmail addresses of the format \((\"username@domain.com\" . \"account-maildir\"))
+to which Gmail integrations (behind the `+gmail' flag of the `mu4e' module) should be applied.
+
+See `+mu4e-msg-gmail-p' and `mu4e-sent-messages-behavior'.")
 
     ;; don't save message to Sent Messages, Gmail/IMAP takes care of this
     (setq mu4e-sent-messages-behavior
@@ -400,14 +404,14 @@ Must be set before org-msg is loaded to take effect.")
 
     (defun +mu4e-msg-gmail-p (msg)
       (let ((root-maildir
-             (replace-regexp-in-string
-              "/.*" "" (substring (mu4e-message-field msg :maildir) 1))))
+             (replace-regexp-in-string "/.*" ""
+                                       (substring (mu4e-message-field msg :maildir) 1))))
         (or (string-match-p "gmail" root-maildir)
             (member root-maildir (mapcar #'cdr +mu4e-gmail-accounts)))))
 
     ;; In my workflow, emails won't be moved at all. Only their flags/labels are
     ;; changed. Se we redefine the trash and refile marks not to do any moving.
-    ;; However, the real magic happens in `+mu4e|gmail-fix-flags'.
+    ;; However, the real magic happens in `+mu4e-gmail-fix-flags-h'.
     ;;
     ;; Gmail will handle the rest.
     (defun +mu4e--mark-seen (docid _msg target)
