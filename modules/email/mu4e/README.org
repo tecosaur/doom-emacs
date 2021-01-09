@@ -173,15 +173,15 @@ Then configure Emacs to use your email address:
 With the =+gmail= flag, integrations are applied which account for the different
 behaviour of Gmail.
 
-The integrations are applied to addresses listed in ~+mu4e-gmail-addresses~. Any
-domain can be specified, so G Suite accounts can benefit from the integrations.
-The relative location of the maildir should also be listed:
+The integrations are applied to addresses with /both/ "@gmail.com" in the
+account address and "gmail" in the account maildir, as well as accounts listed
+in ~+mu4e-gmail-accounts~. Any domain can be specified, so G Suite accounts can
+benefit from the integrations:
 #+begin_src emacs-lisp
-(setq +mu4e-gmail-addresses '(("example@gmail.com" . "/gmail")
-                              ("example@example.com" . "/example")))
+;; if "gmail" is missing from the maildir, the account must be listed here
+(setq +mu4e-gmail-accounts '(("hlissner@gmail.com" . "/hlissner")
+                             ("example@example.com" . "/example")))
 #+end_src
-
-
 
 If you only use Gmail, you can improve performance due to the way Gmail
 presents messages over IMAP:

@@ -386,23 +386,24 @@ Must be set before org-msg is loaded to take effect.")
 
 (when (featurep! +gmail)
   (after! mu4e
-    (defvar +mu4e-gmail-addresses nil
+    (defvar +mu4e-gmail-accounts nil
       "An alist of gmail addresses of the format
-\((\"address@domain.com\" . \"/maildir\"))")
+\((\"address@domain.com\" . \"account-maildir\"))")
 
     ;; don't save message to Sent Messages, Gmail/IMAP takes care of this
     (setq mu4e-sent-messages-behavior
           (lambda () ;; TODO make use +mu4e-msg-gmail-p
             (if (or (string-match-p "@gmail.com\\'" (message-sendmail-envelope-from))
                     (member (message-sendmail-envelope-from)
-                            (mapcar #'car +mu4e-gmail-addresses)))
+                            (mapcar #'car +mu4e-gmail-accounts)))
                 'delete 'sent)))
 
     (defun +mu4e-msg-gmail-p (msg)
-      (or (string-match-p "gmail" (mu4e-message-field msg :maildir))
-          (cl-some
-           (doom-rpartial #'string-prefix-p (mu4e-message-field msg :maildir))
-           (mapcar #'cdr +mu4e-gmail-addresses))))
+      (let ((root-maildir
+             (replace-regexp-in-string
+              "/.*" "" (substring (mu4e-message-field msg :maildir) 1))))
+        (or (string-match-p "gmail" root-maildir)
+            (member root-maildir (mapcar #'cdr +mu4e-gmail-accounts)))))
 
     ;; In my workflow, emails won't be moved at all. Only their flags/labels are
     ;; changed. Se we redefine the trash and refile marks not to do any moving.
