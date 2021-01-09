@@ -194,6 +194,11 @@ presents messages over IMAP:
       mu4e-index-lazy-check t)
 #+end_src
 
+Also, note that Gmail's IMAP settings must have "When I mark a message in IMAP
+as deleted: Auto-Expunge off - Wait for the client to update the server." and
+"When a message is marked as deleted and expunged from the last visible IMAP
+folder: Move the message to the trash" for the integrations to work as expected.
+
 ** OrgMsg
 With the =+org= flag, =org-msg= is installed, and ~org-msg-mode~ is enabled before
 composing the first message. To disable ~org-msg-mode~ by default, simply
