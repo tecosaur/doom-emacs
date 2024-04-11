@@ -23,49 +23,24 @@
         (lambda (&rest _)
           (expand-file-name ".attachments" (mu4e-root-maildir))))
   :config
+  (require 'mu4e-compat)
+  (mu4e-compat-define-aliases-backwards)
+  (mu4e-compat-define-aliases-forwards "1.12")
+
   (when (version< mu4e-mu-version "1.8")
-    ;; Define aliases to maintain backwards compatibility. The list of suffixes
-    ;; were obtained by comparing mu4e~ and mu4e-- functions in `obarray'.
-    (dolist (transferable-suffix
-             '("check-requirements" "contains-line-matching" "context-ask-user"
-               "context-autoswitch" "default-handler" "get-folder" "get-log-buffer"
-               "get-mail-process-filter" "guess-maildir" "key-val"
-               "longest-of-maildirs-and-bookmarks" "maildirs-with-query"
-               "main-action-str" "main-bookmarks" "main-maildirs" "main-menu"
-               "main-queue-size" "main-redraw-buffer"
-               "main-toggle-mail-sending-mode" "main-view" "main-view-queue"
-               "main-view-real" "main-view-real-1" "mark-ask-target"
-               "mark-check-target" "mark-clear" "mark-find-headers-buffer"
-               "mark-get-dyn-target" "mark-get-markpair" "mark-get-move-target"
-               "mark-in-context" "mark-initialize" "org-store-link-message"
-               "org-store-link-query" "pong-handler" "read-char-choice"
-               "read-patch-directory" "replace-first-line-matching"
-               "request-contacts-maybe" "rfc822-phrase-type" "start" "stop"
-               "temp-window" "update-contacts" "update-mail-and-index-real"
-               "update-mail-mode" "update-sentinel-func" "view-gather-mime-parts"
-               "view-open-file" "view-mime-part-to-temp-file"))
-      (defalias (intern (concat "mu4e--" transferable-suffix))
-        (intern (concat "mu4e~" transferable-suffix))
-        "Alias to provide the API of mu4e 1.8 (mu4e~ ⟶ mu4e--).")
-      (dolist (transferable-proc-suffixes
-               '("add" "compose" "contacts" "eat-sexp-from-buf" "filter"
-                 "find" "index" "kill" "mkdir" "move" "ping" "remove"
-                 "sent" "sentinel" "start" "view"))
-        (defalias (intern (concat "mu4e--server-" transferable-proc-suffixes))
-          (intern (concat "mu4e~proc-" transferable-proc-suffixes))
-          "Alias to provide the API of mu4e 1.8 (mu4e~proc ⟶ mu4e--server)."))
-      (defalias 'mu4e-search-rerun #'mu4e-headers-rerun-search
-        "Alias to provide the API of mu4e 1.8.")
-      (defun mu4e (&optional background)
-        "If mu4e is not running yet, start it.
+    (defalias 'mu4e-search-rerun #'mu4e-headers-rerun-search
+      "Alias to provide the API of mu4e 1.8.")
+    (defun mu4e (&optional background)
+      "If mu4e is not running yet, start it.
 Then, show the main window, unless BACKGROUND (prefix-argument)
 is non-nil."
-        (interactive "P")
-        (mu4e--start (and (not background) #'mu4e--main-view))))
-    (setq mu4e-view-show-addresses t
-          mu4e-view-show-images t
-          mu4e-view-image-max-width 800
-          mu4e-view-use-gnus t))
+      (interactive "P")
+      (mu4e--start (and (not background) #'mu4e--main-view))))
+
+  (setq mu4e-view-show-addresses t
+        mu4e-view-show-images t
+        mu4e-view-image-max-width 800
+        mu4e-view-use-gnus t)
 
   (pcase +mu4e-backend
     (`mbsync
